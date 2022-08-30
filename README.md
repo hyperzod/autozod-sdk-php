@@ -24,7 +24,7 @@ If you discover any security related issues, please email siddiquiazam966@gmail.
 
 ## Credits
 
--   [Azam Siddiqui](https://github.com/hyperzod)
+-   [Azam Siddiqui](https://github.com/siddiquiazam)
 -   [All Contributors](../../contributors)
 
 ## License
