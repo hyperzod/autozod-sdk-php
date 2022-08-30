@@ -2,6 +2,7 @@
 
 namespace Hyperzod\AutozodSdkPhp\Client;
 
+use Exception;
 use GuzzleHttp\Client;
 use Hyperzod\AutozodSdkPhp\Enums\EnvironmentEnum;
 use Hyperzod\AutozodSdkPhp\Exception\InvalidArgumentException;
@@ -25,20 +26,20 @@ class BaseAutozodClient implements AutozodClientInterface
     * @param string $env the environment
     */
 
-   public function __construct(string $api_key, string $env)
+   public function __construct($api_key, $env)
    {
-      $config = $this->validateConfig(array([
+      $config = $this->validateConfig(array(
          "api_key" => $api_key,
          "env" => $env
-      ]));
+      ));
 
       //Set the base URL
       if ($config['env'] == EnvironmentEnum::DEV) {
-         $config['api_base'] = $this->DEV_API_BASE;
+         $config['api_base'] = self::DEV_API_BASE;
       }
 
       if ($config['env'] == EnvironmentEnum::PRODUCTION) {
-         $config['api_base'] = $this->PRODUCTION_API_BASE;
+         $config['api_base'] = self::PRODUCTION_API_BASE;
       }
 
       $this->config = $config;
@@ -84,9 +85,22 @@ class BaseAutozodClient implements AutozodClientInterface
 
    public function request($method, $path, $params)
    {
-      $client = new Client();
+      $client = new Client([
+         'headers' => [
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $this->getApiKey()
+         ]
+      ]);
+
       $api = $this->getApiBase() . $path;
-      $res = $client->request($method, $api, $params);
+
+      $response = $client->request($method, $api, [
+         'http_errors' => true,
+         'body' => json_encode($params)
+      ]);
+
+      return $this->validateResponse($response);
    }
 
    /**
@@ -98,7 +112,7 @@ class BaseAutozodClient implements AutozodClientInterface
    {
       // api_key
       if (!isset($config['api_key'])) {
-         throw new InvalidArgumentException('api_key must field is required');
+         throw new InvalidArgumentException('api_key field is required');
       }
 
       if (!is_string($config['api_key'])) {
@@ -106,7 +120,7 @@ class BaseAutozodClient implements AutozodClientInterface
       }
 
       if ('' === $config['api_key']) {
-         throw new InvalidArgumentException('api_key cannot be the empty string');
+         throw new InvalidArgumentException('api_key cannot be an empty string');
       }
 
       if (preg_match('/\s/', $config['api_key'])) {
@@ -114,10 +128,10 @@ class BaseAutozodClient implements AutozodClientInterface
       }
 
       // env
-      $all_envs = (new EnvironmentEnum())->getConstants();
+      $all_envs = array_values((new EnvironmentEnum())->getConstants());
 
       if (!isset($config['env'])) {
-         throw new InvalidArgumentException('env must field is required');
+         throw new InvalidArgumentException('env field is required');
       }
 
       if (!is_string($config['env'])) {
@@ -125,10 +139,10 @@ class BaseAutozodClient implements AutozodClientInterface
       }
 
       if ('' === $config['env']) {
-         throw new InvalidArgumentException('env cannot be the empty string');
+         throw new InvalidArgumentException('env cannot be an empty string');
       }
 
-      if (!in_array($config, $all_envs)) {
+      if (!in_array($config['env'], $all_envs)) {
          throw new InvalidArgumentException('Invalid env');
       }
 
@@ -136,5 +150,32 @@ class BaseAutozodClient implements AutozodClientInterface
          "api_key" => $config['api_key'],
          "env" => $config['env'],
       ];
+   }
+
+   private function validateResponse($response)
+   {
+      $status_code = $response->getStatusCode();
+
+      if ($status_code >= 200 && $status_code < 300) {
+         $response = json_decode($response->getBody(), true);
+         if (isset($response["success"]) && boolval($response["success"])) {
+            if (isset($response["data"])) {
+               return $response["data"];
+            }
+            throw new Exception("Data node not set in server response");
+         }
+         if (isset($response["error"]) && boolval($response["error"])) {
+            $message = null;
+            if (isset($response["message"])) {
+               $message = $response["message"];
+            }
+            if (isset($response["data"])) {
+               $message = $message . json_encode($response["data"]);
+            }
+            throw new Exception($message);
+         }
+      }
+
+      throw new Exception("Error Processing Response");
    }
 }
