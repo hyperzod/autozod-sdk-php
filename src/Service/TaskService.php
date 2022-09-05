@@ -31,4 +31,17 @@ class TaskService extends AbstractService
    {
       return $this->request(HttpMethodEnum::POST, '/task/create', $params);
    }
+
+   /**
+    * Update status of a task on autozod
+    *
+    * @param array $params
+    *
+    * @throws \Hyperzod\AutozodSdkPhp\Exception\ApiErrorException if the request fails
+    *
+    */
+   public function updateStatus(array $params)
+   {
+      return $this->request(HttpMethodEnum::POST, '/task/update/status', $params);
+   }
 }
