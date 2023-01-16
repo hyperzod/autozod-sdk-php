@@ -6,6 +6,7 @@ namespace Hyperzod\AutozodSdkPhp\Service;
  * Service factory class for API resources in the root namespace.
  *
  * @property TaskService $taskService
+ * @property AutoRegisterService $autoRegisterService
  */
 class CoreServiceFactory extends AbstractServiceFactory
 {
@@ -14,6 +15,7 @@ class CoreServiceFactory extends AbstractServiceFactory
      */
     private static $classMap = [
         'task' => TaskService::class,
+        'autoRegister' => AutoRegisterService::class,
     ];
 
     protected function getServiceClass($name)
