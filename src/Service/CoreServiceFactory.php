@@ -7,6 +7,7 @@ namespace Hyperzod\AutozodSdkPhp\Service;
  *
  * @property TaskService $taskService
  * @property AutoRegisterService $autoRegisterService
+ * @property AutoLoginService $autoLoginService
  */
 class CoreServiceFactory extends AbstractServiceFactory
 {
@@ -16,6 +17,7 @@ class CoreServiceFactory extends AbstractServiceFactory
     private static $classMap = [
         'task' => TaskService::class,
         'autoRegister' => AutoRegisterService::class,
+        'autoLogin' => AutoLoginService::class,
     ];
 
     protected function getServiceClass($name)
