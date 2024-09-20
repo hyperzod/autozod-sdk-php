@@ -44,4 +44,17 @@ class TaskService extends AbstractService
    {
       return $this->request(HttpMethodEnum::POST, '/task/update/status', $params);
    }
+   
+   /**
+    * Send notification for a task
+    *
+    * @param array $params
+    *
+    * @throws \Hyperzod\AutozodSdkPhp\Exception\ApiErrorException if the request fails
+    *
+    */
+    public function sendNotification(array $params)
+    {
+       return $this->request(HttpMethodEnum::POST, '/task/sendNotification', $params);
+    }
 }
