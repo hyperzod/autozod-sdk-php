@@ -18,6 +18,8 @@ class CoreServiceFactory extends AbstractServiceFactory
         'task' => TaskService::class,
         'autoRegister' => AutoRegisterService::class,
         'autoLogin' => AutoLoginService::class,
+        'webhook' => WebhookService::class,
+        'geocode' => GeocodeService::class,
     ];
 
     protected function getServiceClass($name)
