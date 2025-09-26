@@ -16,6 +16,6 @@ class GeocodeService extends AbstractService
     */
    public function geocodeAddress(array $params)
    {
-      return $this->request(HttpMethodEnum::GET, '/geocode', $params);
+      return $this->request(HttpMethodEnum::POST, '/geocode', $params);
    }
 }
