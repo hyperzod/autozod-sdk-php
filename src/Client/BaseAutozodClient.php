@@ -89,6 +89,7 @@ class BaseAutozodClient implements AutozodClientInterface
          'headers' => [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
+            'Referer' => config('app.url') ?? null,
             'Authorization' => 'Bearer ' . $this->getApiKey()
          ]
       ]);
