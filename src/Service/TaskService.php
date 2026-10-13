@@ -33,6 +33,19 @@ class TaskService extends AbstractService
    }
 
    /**
+    * Edit a scheduled task on autozod (scheduled time)
+    *
+    * @param array $params
+    *
+    * @throws \Hyperzod\AutozodSdkPhp\Exception\ApiErrorException if the request fails
+    *
+    */
+   public function edit(array $params)
+   {
+      return $this->request(HttpMethodEnum::POST, '/task/edit', $params);
+   }
+
+   /**
     * Update status of a task on autozod
     *
     * @param array $params
