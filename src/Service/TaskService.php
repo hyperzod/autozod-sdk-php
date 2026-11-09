@@ -46,6 +46,19 @@ class TaskService extends AbstractService
    }
 
    /**
+    * Save the customer's rating for a task on autozod
+    *
+    * @param array $params
+    *
+    * @throws \Hyperzod\AutozodSdkPhp\Exception\ApiErrorException if the request fails
+    *
+    */
+   public function rate(array $params)
+   {
+      return $this->request(HttpMethodEnum::POST, '/task/rate', $params);
+   }
+
+   /**
     * Update status of a task on autozod
     *
     * @param array $params
